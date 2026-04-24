@@ -17,7 +17,11 @@ client = OpenAI(
 def scrape_url(url):
     try:
         headers = {"User-Agent": "Mozilla/5.0"}
-        response = requests.get(url, headers=headers, timeout=10)
+        jina_url = f"https://r.jina.ai/{url}"
+
+        response = requests.get(jina_url, headers=headers, timeout=10)
+        
+
         soup = BeautifulSoup(response.text, "html.parser")
 
         # Remove scripts and styles
