@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OWebSumarizer — Instant Web Summarizer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #0a0a0f;
+            --surface: #111118;
+            --surface2: #1a1a24;
+            --border: rgba(255,255,255,0.07);
+            --purple: #7c3aed;
+            --purple-light: #a78bfa;
+            --text: #f1f5f9;
+            --muted: #64748b;
+        }
+
+        html, body {
+            min-height: 100%;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        /* ── Navbar ── */
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .nav-icon {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, var(--purple), #4f46e5);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .nav-title {
+            font-size: 1rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #a78bfa, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-badge {
+            background: rgba(167,139,250,0.12);
+            color: var(--purple-light);
+            border: 1px solid rgba(167,139,250,0.25);
+            padding: 3px 12px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 500;
+        }
+
+        /* ── Hero ── */
+        .hero {
+            text-align: center;
+            padding: 4rem 1.5rem 2.5rem;
+        }
+
+        .hero h1 {
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            font-weight: 700;
+            background: linear-gradient(90deg, #a78bfa, #60a5fa, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+            margin-bottom: 0.75rem;
+        }
+
+        .hero p {
+            color: var(--muted);
+            font-size: clamp(0.9rem, 2vw, 1.05rem);
+            max-width: 480px;
+            margin: 0 auto 2rem;
+            line-height: 1.6;
+        }
+
+        /* ── Input Card ── */
+        .input-card {
+            max-width: 680px;
+            margin: 0 auto;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 1.5rem;
+        }
+
+        .url-wrap {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .url-icon {
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        #urlInput {
+            flex: 1;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            color: var(--text);
+            font-size: 0.9rem;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        #urlInput:focus {
+            border-color: rgba(167,139,250,0.4);
+            box-shadow: 0 0 0 3px rgba(124,58,237,0.08);
+        }
+
+        #urlInput::placeholder { color: var(--muted); }
+
+        .summarize-btn {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, var(--purple), #4f46e5);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            white-space: nowrap;
+            transition: opacity 0.2s, transform 0.15s;
+            flex-shrink: 0;
+        }
+
+        .summarize-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+        .summarize-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        /* ── Examples ── */
+        .examples {
+            margin-top: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .examples-label { font-size: 0.73rem; color: var(--muted); }
+
+        .example-chip {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 3px 12px;
+            font-size: 0.73rem;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .example-chip:hover {
+            border-color: rgba(167,139,250,0.3);
+            color: var(--purple-light);
+        }
+
+        /* ── Result ── */
+        .result-section {
+            max-width: 680px;
+            margin: 2rem auto 4rem;
+            display: none;
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .result-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--purple-light);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .result-url {
+            font-size: 0.72rem;
+            color: var(--muted);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 300px;
+        }
+
+        .copy-btn {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: #94a3b8;
+            font-size: 0.75rem;
+            padding: 4px 12px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.15s;
+        }
+
+        .copy-btn:hover { border-color: rgba(167,139,250,0.3); color: var(--purple-light); }
+
+        .result-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.75rem;
+            line-height: 1.75;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+        }
+
+        .result-card strong { color: var(--purple-light); display: block; margin: 1rem 0 0.4rem; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .result-card strong:first-child { margin-top: 0; }
+
+        /* ── Loading ── */
+        .loading {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            padding: 3rem;
+            max-width: 680px;
+            margin: 2rem auto;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--purple);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .loading-text { color: var(--muted); font-size: 0.88rem; }
+
+        /* ── Error ── */
+        .error-box {
+            display: none;
+            max-width: 680px;
+            margin: 1.5rem auto;
+            background: rgba(239,68,68,0.08);
+            border: 1px solid rgba(239,68,68,0.2);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            color: #fca5a5;
+            font-size: 0.87rem;
+        }
+
+        /* ── Features ── */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            max-width: 680px;
+            margin: 3rem auto 1rem;
+            padding: 0 1.5rem;
+        }
+
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.25rem;
+        }
+
+        .feature-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .feature-title { font-size: 0.88rem; font-weight: 600; margin-bottom: 0.3rem; }
+        .feature-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+
+        /* ── Pricing ── */
+        .pricing {
+            max-width: 680px;
+            margin: 3rem auto;
+            padding: 0 1.5rem;
+            text-align: center;
+        }
+
+        .pricing h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #a78bfa, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing p { color: var(--muted); font-size: 0.85rem; margin-bottom: 1.5rem; }
+
+        .plans {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .plan {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: left;
+        }
+
+        .plan.popular {
+            border-color: rgba(124,58,237,0.4);
+            background: #0f0b1f;
+        }
+
+        .plan-badge {
+            background: var(--purple);
+            color: white;
+            font-size: 0.68rem;
+            font-weight: 600;
+            padding: 2px 10px;
+            border-radius: 999px;
+            display: inline-block;
+            margin-bottom: 0.75rem;
+        }
+
+        .plan-name { font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem; }
+        .plan-price { font-size: 1.6rem; font-weight: 700; color: var(--purple-light); margin-bottom: 0.75rem; }
+        .plan-price span { font-size: 0.8rem; color: var(--muted); font-weight: 400; }
+
+        .plan-features { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
+        .plan-features li { font-size: 0.8rem; color: #94a3b8; display: flex; align-items: center; gap: 6px; }
+        .plan-features li::before { content: "✓"; color: #22c55e; font-weight: 700; font-size: 0.75rem; }
+
+        .plan-btn {
+            width: 100%;
+            margin-top: 1.25rem;
+            padding: 0.65rem;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: opacity 0.2s;
+        }
+
+        .plan-btn.outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+        .plan-btn.filled { background: linear-gradient(135deg, var(--purple), #4f46e5); border: none; color: white; }
+        .plan-btn:hover { opacity: 0.85; }
+
+        /* ── Footer ── */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--muted);
+            font-size: 0.75rem;
+            border-top: 1px solid var(--border);
+        }
+
+        @media (max-width: 600px) {
+            .url-wrap { flex-direction: column; }
+            .summarize-btn { width: 100%; }
+            .plans { grid-template-columns: 1fr; }
+            nav { padding: 1rem; }
+            .hero { padding: 2.5rem 1rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav>
+    <div class="nav-logo">
+        <div class="nav-icon">✦</div>
+        <span class="nav-title">OWebSumarizer</span>
+    </div>
+    <span class="nav-badge">Powered by Gemini</span>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+    <h1>Summarize Any Webpage<br>in Seconds</h1>
+    <p>Paste any URL and get an instant AI-powered summary with key points and conclusions.</p>
+
+    <div class="input-card">
+        <div class="url-wrap">
+            <span class="url-icon">🔗</span>
+            <input type="text" id="urlInput" placeholder="https://example.com/article..." />
+            <button class="summarize-btn" id="summarizeBtn" onclick="summarize()">Summarize</button>
+        </div>
+        <div class="examples">
+            <span class="examples-label">Try:</span>
+            <span class="example-chip" onclick="useExample('https://en.wikipedia.org/wiki/Artificial_intelligence')">Wikipedia AI</span>
+            <span class="example-chip" onclick="useExample('https://www.bbc.com/news')">BBC News</span>
+            <span class="example-chip" onclick="useExample('https://techcrunch.com')">TechCrunch</span>
+        </div>
+    </div>
+</div>
+
+<!-- Error -->
+<div class="error-box" id="errorBox"></div>
+
+<!-- Loading -->
+<div class="loading" id="loading">
+    <div class="spinner"></div>
+    <div class="loading-text">Reading and summarizing the page...</div>
+</div>
+
+<!-- Result -->
+<div class="result-section" id="resultSection">
+    <div class="result-header">
+        <div>
+            <div class="result-title">✦ Summary Ready</div>
+            <div class="result-url" id="resultUrl"></div>
+        </div>
+        <button class="copy-btn" onclick="copyResult()">Copy</button>
+    </div>
+    <div class="result-card" id="resultCard"></div>
+</div>
+
+<!-- Features -->
+<div class="features">
+    <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">Instant Results</div>
+        <div class="feature-desc">Get a full summary in under 10 seconds from any public webpage.</div>
+    </div>
+    <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <div class="feature-title">Key Points</div>
+        <div class="feature-desc">Automatically extracts the 5 most important points from any article.</div>
+    </div>
+    <div class="feature-card">
+        <div class="feature-icon">🌐</div>
+        <div class="feature-title">Any Website</div>
+        <div class="feature-desc">Works with news sites, Wikipedia, blogs, research papers and more.</div>
+    </div>
+</div>
+
+<!-- Pricing -->
+<div class="pricing">
+    <h2>Simple Pricing</h2>
+    <p>Start free. Upgrade when you need more.</p>
+    <div class="plans">
+        <div class="plan">
+            <div class="plan-name">Free</div>
+            <div class="plan-price">$0 <span>/month</span></div>
+            <ul class="plan-features">
+                <li>5 summaries per day</li>
+                <li>Standard speed</li>
+                <li>Key points extraction</li>
+            </ul>
+            <button class="plan-btn outline">Get Started</button>
+        </div>
+        <div class="plan popular">
+            <div class="plan-badge">Most Popular</div>
+            <div class="plan-name">Pro</div>
+            <div class="plan-price">$9 <span>/month</span></div>
+            <ul class="plan-features">
+                <li>Unlimited summaries</li>
+                <li>Priority speed</li>
+                <li>Export as PDF</li>
+                <li>History & saved summaries</li>
+            </ul>
+            <button class="plan-btn filled">Upgrade to Pro</button>
+        </div>
+    </div>
+</div>
+
+<footer>
+    OWebSumarizer © 2026
+</footer>
+
+<script>
+    function useExample(url) {
+        document.getElementById("urlInput").value = url;
+        summarize();
+    }
+
+    async function summarize() {
+        const url = document.getElementById("urlInput").value.trim();
+        if (!url) return;
+
+        document.getElementById("errorBox").style.display = "none";
+        document.getElementById("resultSection").style.display = "none";
+        document.getElementById("loading").style.display = "flex";
+        document.getElementById("summarizeBtn").disabled = true;
+
+        try {
+            const res = await fetch("/summarize", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ url })
+            });
+
+            const data = await res.json();
+            document.getElementById("loading").style.display = "none";
+            document.getElementById("summarizeBtn").disabled = false;
+
+            if (data.error) {
+                document.getElementById("errorBox").textContent = "⚠ " + data.error;
+                document.getElementById("errorBox").style.display = "block";
+                return;
+            }
+
+            // Format the markdown-like response
+            const formatted = data.summary
+                .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+                .replace(/•/g, "<br>•")
+                .replace(/\n/g, "<br>");
+
+            document.getElementById("resultCard").innerHTML = formatted;
+            document.getElementById("resultUrl").textContent = data.url;
+            document.getElementById("resultSection").style.display = "block";
+            document.getElementById("resultSection").scrollIntoView({ behavior: "smooth" });
+
+        } catch(err) {
+            document.getElementById("loading").style.display = "none";
+            document.getElementById("summarizeBtn").disabled = false;
+            document.getElementById("errorBox").textContent = "⚠ Connection error. Please try again.";
+            document.getElementById("errorBox").style.display = "block";
+        }
+    }
+
+    function copyResult() {
+        const text = document.getElementById("resultCard").innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            const btn = document.querySelector(".copy-btn");
+            btn.textContent = "Copied!";
+            setTimeout(() => btn.textContent = "Copy", 2000);
+        });
+    }
+
+    document.getElementById("urlInput").addEventListener("keydown", function(e) {
+        if (e.key === "Enter") summarize();
+    });
+</script>
+
+</body>
+</html>
