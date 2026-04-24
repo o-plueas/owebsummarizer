@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OWebSumarizer — Instant Web Summarizer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -400,7 +401,7 @@
 <!-- Navbar -->
 <nav>
     <div class="nav-logo">
-        <div class="nav-icon">✦</div>
+        <div class="nav-icon"><i class="fa-solid fa-star"></i></div>
         <span class="nav-title">OWebSumarizer</span>
     </div>
     <span class="nav-badge">Powered by Gemini</span>
@@ -413,7 +414,7 @@
 
     <div class="input-card">
         <div class="url-wrap">
-            <span class="url-icon">🔗</span>
+            <span class="url-icon"><i class="fa-solid fa-link"></i></span>
             <input type="text" id="urlInput" placeholder="https://example.com/article..." />
             <button class="summarize-btn" id="summarizeBtn" onclick="summarize()">Summarize</button>
         </div>
@@ -438,7 +439,7 @@
 <div class="result-section" id="resultSection">
     <div class="result-header">
         <div>
-            <div class="result-title">✦ Summary Ready</div>
+            <div class="result-title"><i class="fa-solid fa-star"></i> Summary Ready</div>
             <div class="result-url" id="resultUrl"></div>
         </div>
         <button class="copy-btn" onclick="copyResult()">Copy</button>
@@ -449,17 +450,17 @@
 <!-- Features -->
 <div class="features">
     <div class="feature-card">
-        <div class="feature-icon">⚡</div>
+        <div class="feature-icon"><i class="fa-solid fa-file"></i> Result</div>
         <div class="feature-title">Instant Results</div>
         <div class="feature-desc">Get a full summary in under 10 seconds from any public webpage.</div>
     </div>
     <div class="feature-card">
-        <div class="feature-icon">🎯</div>
+        <div class="feature-icon"><i class="fa-solid fa-lightbulb"></i></div>
         <div class="feature-title">Key Points</div>
         <div class="feature-desc">Automatically extracts the 5 most important points from any article.</div>
     </div>
     <div class="feature-card">
-        <div class="feature-icon">🌐</div>
+        <div class="feature-icon"><i class="fa-solid fa-globe"></i></div>
         <div class="feature-title">Any Website</div>
         <div class="feature-desc">Works with news sites, Wikipedia, blogs, research papers and more.</div>
     </div>
